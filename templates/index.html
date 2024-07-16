@@ -1,106 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cocktail Recipe Book</title>
-    <style>
-        body {
-            background-color: #002B5B;
-            color: #FFFFFF;
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            padding: 10px;
-        }
-        .header h1 {
-            color: #FF0000;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-        }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #CCCCCC;
-            border-radius: 4px;
-        }
-        .form-group button {
-            padding: 10px 15px;
-            border: none;
-            background-color: #FF0000;
-            color: #FFFFFF;
-            cursor: pointer;
-        }
-        .form-group button:hover {
-            background-color: #CC0000;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Cocktail Recipe Book</title>
+      <style>
+         body {
+         background-color: #002B5B;
+         color: #FFFFFF;
+         font-family: Arial, sans-serif;
+         padding: 20px;
+         }
+         .container {
+         max-width: 800px;
+         margin: 0 auto;
+         }
+         .header {
+         text-align: center;
+         padding: 10px;
+         }
+         .header h1 {
+         color: #FF0000;
+         }
+         .form-group {
+         margin-bottom: 15px;
+         }
+         .form-group label {
+         display: block;
+         }
+         .form-group input, .form-group textarea {
+         width: 100%;
+         padding: 8px;
+         margin-top: 5px;
+         border: 1px solid #CCCCCC;
+         border-radius: 4px;
+         }
+         .form-group button {
+         padding: 10px 15px;
+         border: none;
+         background-color: #FF0000;
+         color: #FFFFFF;
+         cursor: pointer;
+         }
+         .form-group button:hover {
+         background-color: #CC0000;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="container">
+         <div class="header">
             <h1>Cocktail Recipe Book</h1>
-        </div>
-        <div class="form-group">
+         </div>
+         <div class="form-group">
             <label for="drink-name">Drink Name</label>
             <input type="text" id="drink-name" name="drink-name">
-        </div>
-        <div class="form-group">
+         </div>
+         <div class="form-group">
             <label for="drink-description">Description</label>
             <textarea id="drink-description" name="drink-description"></textarea>
-        </div>
-        <div class="form-group">
+         </div>
+         <div class="form-group">
             <button type="button" onclick="createDrink()">Add Drink</button>
-        </div>
-        <div id="drinks-list"></div>
-    </div>
-    <script>
-        async function createDrink() {
-            const name = document.getElementById('drink-name').value;
-            const description = document.getElementById('drink-description').value;
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/drinks`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`
-                },
-                body: JSON.stringify({ name, description })
-            });
-            const data = await response.json();
-            console.log(data);
-            listDrinks();
-        }
-
-        async function listDrinks() {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/drinks`, {
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`
-                }
-            });
-            const drinks = await response.json();
-            const drinksList = document.getElementById('drinks-list');
-            drinksList.innerHTML = drinks.map(drink => `
-                <div>
-                    <h2>${drink.name}</h2>
-                    <p>${drink.description}</p>
-                </div>
-            `).join('');
-        }
-
-        listDrinks();
-    </script>
-</body>
+         </div>
+         <div id="drinks-list"></div>
+      </div>
+      <script>
+         async function createDrink() {
+             const name = document.getElementById('drink-name').value;
+             const description = document.getElementById('drink-description').value;
+             const response = await fetch(`${SUPABASE_URL}/rest/v1/drinks`, {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                     'apikey': SUPABASE_KEY,
+                     'Authorization': `Bearer ${SUPABASE_KEY}`
+                 },
+                 body: JSON.stringify({ name, description })
+             });
+             const data = await response.json();
+             console.log(data);
+             listDrinks();
+         }
+         
+         async function listDrinks() {
+             const response = await fetch(`${SUPABASE_URL}/rest/v1/drinks`, {
+                 headers: {
+                     'apikey': SUPABASE_KEY,
+                     'Authorization': `Bearer ${SUPABASE_KEY}`
+                 }
+             });
+             const drinks = await response.json();
+             const drinksList = document.getElementById('drinks-list');
+             drinksList.innerHTML = drinks.map(drink => `
+                 <div>
+                     <h2>${drink.name}</h2>
+                     <p>${drink.description}</p>
+                 </div>
+             `).join('');
+         }
+         
+         listDrinks();
+      </script>
+   </body>
 </html>
