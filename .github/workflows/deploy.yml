@@ -29,6 +29,7 @@ jobs:
         SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       run: |
         echo "Building and deploying..."
-        # Add your build and deploy commands here
+        echo "SUPABASE_URL=${SUPABASE_URL}" >> $GITHUB_ENV
+        echo "SUPABASE_KEY=${SUPABASE_KEY}" >> $GITHUB_ENV
         # For example, if you have a script to run the Flask app:
         python app.py
