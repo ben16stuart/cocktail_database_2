@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'  # Specify the Python version you need
+        python-version: '3.12'
 
     - name: Install dependencies
       run: |
@@ -36,4 +36,5 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./templates  # Ensure this is the correct directory to publish
+        publish_branch: gh-pages
+        publish_dir: ./templates  # This should point to the directory containing index.html
