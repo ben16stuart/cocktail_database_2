@@ -6,7 +6,7 @@
     <title>Cocktail Recipe Book</title>
     <style>
         body {
-            background-color: #000000;
+            background-color: #000;
             color: #FFD700;
             font-family: Arial, sans-serif;
             padding: 20px;
@@ -22,20 +22,18 @@
         .header h1 {
             color: #FFD700;
         }
-        .form-group, .drink {
+        .form-group {
             margin-bottom: 15px;
         }
         .form-group label {
             display: block;
         }
-        .form-group input, .form-group textarea {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
-            border: 1px solid #FFD700;
+            border: 1px solid #CCCCCC;
             border-radius: 4px;
-            background-color: #333;
-            color: #FFD700;
         }
         .form-group button {
             padding: 10px 15px;
@@ -45,7 +43,10 @@
             cursor: pointer;
         }
         .form-group button:hover {
-            background-color: #DAA520;
+            background-color: #CCAA00;
+        }
+        .section {
+            margin-top: 30px;
         }
     </style>
 </head>
@@ -54,64 +55,159 @@
         <div class="header">
             <h1>Cocktail Recipe Book</h1>
         </div>
-        <div id="random-drink" class="drink"></div>
-        <div class="form-group">
-            <label for="search-query">Search for Drinks</label>
-            <input type="text" id="search-query" name="search-query">
-            <button type="button" onclick="searchDrinks()">Search</button>
+        
+        <!-- Random Drink Section -->
+        <div class="section" id="random-drink-section">
+            <h2>Featured Drink</h2>
+            <div id="random-drink"></div>
         </div>
-        <div id="search-results" class="drink"></div>
-        <div class="form-group">
-            <button type="button" onclick="generateDrink()">Generate Random Drink</button>
+
+        <!-- Search Section -->
+        <div class="section">
+            <h2>Search Drinks</h2>
+            <div class="form-group">
+                <label for="search-by-name">Search by Name</label>
+                <input type="text" id="search-by-name" name="search-by-name">
+                <button type="button" onclick="searchByName()">Search</button>
+            </div>
+            <div class="form-group">
+                <label for="search-by-ingredient">Search by Ingredient</label>
+                <select id="search-by-ingredient" name="search-by-ingredient"></select>
+                <button type="button" onclick="searchByIngredient()">Search</button>
+            </div>
+            <div id="search-results"></div>
         </div>
-        <div id="generated-drink" class="drink"></div>
+
+        <!-- Generate Random Drink Section -->
+        <div class="section">
+            <h2>Generate Random Drink</h2>
+            <button type="button" onclick="generateRandomDrink()">Generate</button>
+            <div id="generated-drink"></div>
+        </div>
     </div>
     <script>
-        const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
-        const SUPABASE_KEY = 'your-supabase-key';
+        const SUPABASE_URL = 'https://qflhgztoxamhdhlxjpjc.supabase.co';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_KEY';
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function fetchRandomDrink() {
-            const response = await fetch('/random-drink');
-            const drink = await response.json();
-            displayDrink(drink, 'random-drink');
+            const { data, error } = await supabase
+                .from('drinks')
+                .select('*')
+                .order('random()')
+                .limit(1);
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            displayDrink(data[0], 'random-drink');
         }
 
-        async function searchDrinks() {
-            const query = document.getElementById('search-query').value;
-            const response = await fetch(`/search-drinks?query=${query}`);
-            const drinks = await response.json();
-            displayDrinks(drinks, 'search-results');
+        async function searchByName() {
+            const name = document.getElementById('search-by-name').value;
+            const { data, error } = await supabase
+                .from('drinks')
+                .select('*')
+                .ilike('name', `%${name}%`);
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            displaySearchResults(data);
         }
 
-        async function generateDrink() {
-            const response = await fetch('/generate-drink');
-            const drink = await response.json();
-            displayDrink(drink, 'generated-drink');
+        async function searchByIngredient() {
+            const ingredient = document.getElementById('search-by-ingredient').value;
+            const { data, error } = await supabase
+                .from('drinks')
+                .select('*')
+                .contains('ingredients', [ingredient]);
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            displaySearchResults(data);
+        }
+
+        async function generateRandomDrink() {
+            const { data, error } = await supabase
+                .from('drinks')
+                .select('*')
+                .order('random()')
+                .limit(1);
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            displayDrink(data[0], 'generated-drink');
         }
 
         function displayDrink(drink, elementId) {
             const drinkElement = document.getElementById(elementId);
             drinkElement.innerHTML = `
-                <h2>${drink.name}</h2>
+                <h3>${drink.name}</h3>
                 <p>Category: ${drink.category}</p>
-                <p>${drink.description}</p>
-                <img src="${drink.picture_url}" alt="${drink.name}" style="width:100%">
+                <p>Description: ${drink.description}</p>
+                <img src="${drink.picture_url}" alt="${drink.name}" style="max-width: 100%; height: auto;">
+                <h4>Ingredients:</h4>
+                <ul>
+                    ${drink.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                </ul>
+                <h4>Directions:</h4>
+                <ol>
+                    ${drink.directions.map(direction => `<li>${direction}</li>`).join('')}
+                </ol>
             `;
         }
 
-        function displayDrinks(drinks, elementId) {
-            const drinksElement = document.getElementById(elementId);
-            drinksElement.innerHTML = drinks.map(drink => `
+        function displaySearchResults(drinks) {
+            const searchResults = document.getElementById('search-results');
+            searchResults.innerHTML = drinks.map(drink => `
                 <div>
-                    <h2>${drink.name}</h2>
+                    <h3>${drink.name}</h3>
                     <p>Category: ${drink.category}</p>
-                    <p>${drink.description}</p>
-                    <img src="${drink.picture_url}" alt="${drink.name}" style="width:100%">
+                    <p>Description: ${drink.description}</p>
+                    <img src="${drink.picture_url}" alt="${drink.name}" style="max-width: 100%; height: auto;">
+                    <h4>Ingredients:</h4>
+                    <ul>
+                        ${drink.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                    </ul>
+                    <h4>Directions:</h4>
+                    <ol>
+                        ${drink.directions.map(direction => `<li>${direction}</li>`).join('')}
+                    </ol>
                 </div>
             `).join('');
         }
 
+        async function populateIngredientDropdown() {
+            const { data, error } = await supabase
+                .from('ingredients')
+                .select('name');
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            const ingredientDropdown = document.getElementById('search-by-ingredient');
+            ingredientDropdown.innerHTML = data.map(ingredient => `
+                <option value="${ingredient.name}">${ingredient.name}</option>
+            `).join('');
+        }
+
+        // Initialize
         fetchRandomDrink();
+        populateIngredientDropdown();
     </script>
 </body>
 </html>
