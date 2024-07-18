@@ -100,10 +100,12 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Supabase client initialization using GitHub Secrets
-        const SUPABASE_URL = process.env.SUPABASE_URL;
-        const SUPABASE_KEY = process.env.SUPABASE_KEY;
+        // Supabase client initialization
+        const SUPABASE_URL = process.env.SUPABASE_URL || '{{ SUPABASE_URL }}';
+        const SUPABASE_KEY = process.env.SUPABASE_KEY || '{{ SUPABASE_KEY }}';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        console.log('Supabase initialized:', supabase);
 
         async function fetchRandomDrink() {
             const { data, error } = await supabase
@@ -117,6 +119,7 @@
                 return;
             }
 
+            console.log('Random drink data:', data);
             displayDrink(data[0], 'random-drink');
         }
 
@@ -134,6 +137,7 @@
                 return;
             }
 
+            console.log('Search by ingredient data:', data);
             displaySearchResults(data);
         }
 
@@ -149,6 +153,7 @@
                 return;
             }
 
+            console.log('Generated random drink data:', data);
             displayDrink(data[0], 'generated-drink');
         }
 
@@ -171,6 +176,9 @@
                 return;
             }
 
+            console.log('Drinks data:', drinksData);
+            console.log('Ingredients data:', ingredientsData);
+
             const drinkDropdown = document.getElementById('search-by-name');
             drinkDropdown.innerHTML += drinksData.map(drink => `
                 <option value="${drink.name}">${drink.name}</option>
@@ -180,9 +188,6 @@
             ingredientDropdown.innerHTML += ingredientsData.map(ingredient => `
                 <option value="${ingredient.name}">${ingredient.name}</option>
             `).join('');
-
-            console.log('Drinks dropdown populated:', drinksData);
-            console.log('Ingredients dropdown populated:', ingredientsData);
         }
 
         async function displaySelectedDrink() {
@@ -199,6 +204,7 @@
                 return;
             }
 
+            console.log('Selected drink data:', data);
             displayDrink(data[0], 'search-results');
         }
 
@@ -235,3 +241,22 @@
                         <p>Description: ${drink.description}</p>
                         <h4>Ingredients:</h4>
                         <ul>
+                            ${drink.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                        </ul>
+                        <h4>Directions:</h4>
+                        <ol>
+                            ${drink.directions.map(direction => `<li>${direction}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Document loaded. Fetching random drink and populating dropdowns...');
+            fetchRandomDrink();
+            populateDropdowns();
+        });
+    </script>
+</body>
+</html>
