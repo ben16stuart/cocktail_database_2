@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - main  # Change this to your default branch
 
 jobs:
   build-deploy:
@@ -12,11 +12,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -28,15 +23,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Generate static site
+    - name: Run Flask
       run: |
-        mkdir -p build
-        cp -r templates/* build/
-        # Add more commands here if you need to generate more static content
+        flask run &
+        sleep 5
+        curl -s -o /dev/null -w "%{http_code}" http://localhost:5000
+        pkill -f "flask run"
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
-        force_orphan: true  # Ensure there are no conflicts with existing history
+        publish_dir: ./templates
