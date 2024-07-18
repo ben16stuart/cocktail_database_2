@@ -98,10 +98,11 @@
             <div id="generated-drink"></div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        const SUPABASE_URL = 'https://qflhgztoxamhdhlxjpjc.supabase.co';
-        const SUPABASE_KEY = 'YOUR_SUPABASE_KEY';
-
+        // Supabase client initialization using GitHub Secrets
+        const SUPABASE_URL = process.env.SUPABASE_URL;
+        const SUPABASE_KEY = process.env.SUPABASE_KEY;
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function fetchRandomDrink() {
@@ -112,7 +113,7 @@
                 .limit(1);
 
             if (error) {
-                console.error(error);
+                console.error('Error fetching random drink:', error);
                 return;
             }
 
@@ -121,13 +122,15 @@
 
         async function searchByIngredient() {
             const ingredient = document.getElementById('search-by-ingredient').value;
+            console.log('Selected ingredient:', ingredient);
+
             const { data, error } = await supabase
                 .from('drinks')
                 .select('*')
                 .contains('ingredients', [ingredient]);
 
             if (error) {
-                console.error(error);
+                console.error('Error searching by ingredient:', error);
                 return;
             }
 
@@ -142,7 +145,7 @@
                 .limit(1);
 
             if (error) {
-                console.error(error);
+                console.error('Error generating random drink:', error);
                 return;
             }
 
@@ -159,12 +162,12 @@
                 .select('name');
 
             if (drinksError) {
-                console.error(drinksError);
+                console.error('Error fetching drink names:', drinksError);
                 return;
             }
 
             if (ingredientsError) {
-                console.error(ingredientsError);
+                console.error('Error fetching ingredients:', ingredientsError);
                 return;
             }
 
@@ -177,17 +180,22 @@
             ingredientDropdown.innerHTML += ingredientsData.map(ingredient => `
                 <option value="${ingredient.name}">${ingredient.name}</option>
             `).join('');
+
+            console.log('Drinks dropdown populated:', drinksData);
+            console.log('Ingredients dropdown populated:', ingredientsData);
         }
 
         async function displaySelectedDrink() {
             const drinkName = document.getElementById('search-by-name').value;
+            console.log('Selected drink name:', drinkName);
+
             const { data, error } = await supabase
                 .from('drinks')
                 .select('*')
                 .eq('name', drinkName);
 
             if (error) {
-                console.error(error);
+                console.error('Error displaying selected drink:', error);
                 return;
             }
 
@@ -227,20 +235,3 @@
                         <p>Description: ${drink.description}</p>
                         <h4>Ingredients:</h4>
                         <ul>
-                            ${drink.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
-                        </ul>
-                        <h4>Directions:</h4>
-                        <ol>
-                            ${drink.directions.map(direction => `<li>${direction}</li>`).join('')}
-                        </ol>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Initialize
-        fetchRandomDrink();
-        populateDropdowns();
-    </script>
-</body>
-</html>
