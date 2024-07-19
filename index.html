@@ -100,7 +100,7 @@
     </div>
     <!-- Use ES Module for supabase-js -->
     <script type="module">
-        import { createClient } from '@supabase/supabase-js';
+        import { createClient } from './node_modules/@supabase/supabase-js/dist/module/index.js';
 
         const SUPABASE_URL = '${SUPABASE_URL}';
         const SUPABASE_KEY = '${SUPABASE_KEY}';
