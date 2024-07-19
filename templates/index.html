@@ -98,32 +98,14 @@
             <div id="generated-drink"></div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Ensure Supabase is initialized
-            const SUPABASE_URL = '__SUPABASE_URL__';
-            const SUPABASE_KEY = '__SUPABASE_KEY__';
-            import { createClient } from 'supabase/supabase-js'
-            console.log('SUPABASE_URL:', SUPABASE_URL);
+    <!-- Use ES Module for supabase-js -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/supabase.esm.js';
 
-            const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = '__SUPABASE_URL__';
+        const SUPABASE_KEY = '__SUPABASE_KEY__';
 
-            if (supabase && supabase.createClient) {
-                supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                console.log('Supabase initialized:', supabase);
-            } else {
-                console.error('Supabase library is not loaded correctly.');
-                return;
-            }
-
-            try {
-                await fetchRandomDrink();
-                await populateDropdowns();
-            } catch (error) {
-                console.error('Error during initialization:', error);
-            }
-        });
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function fetchRandomDrink() {
             const { data, error } = await supabase
@@ -269,6 +251,10 @@
                 </div>
             `).join('');
         }
+
+        // Initialize
+        populateDropdowns();
+        fetchRandomDrink();
     </script>
 </body>
 </html>
