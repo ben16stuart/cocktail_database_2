@@ -100,12 +100,23 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Supabase client initialization
-        const SUPABASE_URL = '{{ SUPABASE_URL }}';
-        const SUPABASE_KEY = '{{ SUPABASE_KEY }}';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Ensure Supabase is initialized
+        let supabase;
 
-        console.log('Supabase initialized:', supabase);
+        document.addEventListener('DOMContentLoaded', async () => {
+            const SUPABASE_URL = '{{ SUPABASE_URL }}';
+            const SUPABASE_KEY = '{{ SUPABASE_KEY }}';
+            supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            console.log('Supabase initialized:', supabase);
+
+            try {
+                await fetchRandomDrink();
+                await populateDropdowns();
+            } catch (error) {
+                console.error('Error during initialization:', error);
+            }
+        });
 
         async function fetchRandomDrink() {
             const { data, error } = await supabase
@@ -251,12 +262,6 @@
                 </div>
             `).join('');
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Document loaded. Fetching random drink and populating dropdowns...');
-            fetchRandomDrink();
-            populateDropdowns();
-        });
     </script>
 </body>
 </html>
