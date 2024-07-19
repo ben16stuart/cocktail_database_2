@@ -180,13 +180,17 @@
             console.log('Ingredients data:', ingredientsData);
 
             const drinkDropdown = document.getElementById('search-by-name');
+            const ingredientDropdown = document.getElementById('search-by-ingredient');
+
+            drinkDropdown.innerHTML = '<option value="">Select a drink</option>'; // Add default option
+            ingredientDropdown.innerHTML = '<option value="">Select an ingredient</option>';
+
             drinkDropdown.innerHTML += drinksData.map(drink => `
-                <option value="${drink.name}">${drink.name}</option>
+                <option value="<span class="math-inline">\{drink\.name\}"\></span>{drink.name}</option>
             `).join('');
 
-            const ingredientDropdown = document.getElementById('search-by-ingredient');
             ingredientDropdown.innerHTML += ingredientsData.map(ingredient => `
-                <option value="${ingredient.name}">${ingredient.name}</option>
+                <option value="<span class="math-inline">\{ingredient\.name\}"\></span>{ingredient.name}</option>
             `).join('');
         }
 
