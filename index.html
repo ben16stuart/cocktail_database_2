@@ -104,10 +104,10 @@
             // Ensure Supabase is initialized
             const SUPABASE_URL = '${SUPABASE_URL}';
             const SUPABASE_KEY = '${SUPABASE_KEY}';
-
+            import { createClient } from 'supabase/supabase-js'
             console.log('SUPABASE_URL:', SUPABASE_URL);
 
-            const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
             if (supabase && supabase.createClient) {
                 supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
