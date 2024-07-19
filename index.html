@@ -101,8 +101,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
         // Supabase client initialization
-        const SUPABASE_URL = process.env.SUPABASE_URL || '{{ SUPABASE_URL }}';
-        const SUPABASE_KEY = process.env.SUPABASE_KEY || '{{ SUPABASE_KEY }}';
+        const SUPABASE_URL = '{{ SUPABASE_URL }}';
+        const SUPABASE_KEY = '{{ SUPABASE_KEY }}';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         console.log('Supabase initialized:', supabase);
