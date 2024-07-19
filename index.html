@@ -1,139 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cocktail Recipe Book</title>
-  <style>
-    /* Black and gold theme */
-    body {
-      background-color: #000;
-      color: #FFD700;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .header {
-      text-align: center;
-      padding: 10px;
-    }
-
-    .header h1 {
-      color: #FFD700;
-      font-size: 3em;
-    }
-
-    .landing-drink {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 50px;
-    }
-
-    .landing-drink img {
-      max-width: 400px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-    }
-
-    .landing-drink h2 {
-      font-size: 2em;
-    }
-
-    .search-section {
-      margin-bottom: 50px;
-    }
-
-    .search-section h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #CCCCCC;
-      border-radius: 4px;
-    }
-
-    .form-group button {
-      padding: 10px 15px;
-      border: none;
-      background-color: #FFD700;
-      color: #000;
-      cursor: pointer;
-    }
-
-    .form-group button:hover {
-      background-color: #CCAA00;
-    }
-
-    .search-results {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-
-    .search-result {
-      width: 45%;
-      margin-bottom: 20px;
-      border: 1px solid #CCCCCC;
-      border-radius: 5px;
-      padding: 10px;
-    }
-
-    .search-result img {
-      max-width: 100%;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-
-    .search-result h3 {
-      font-size: 1.2em;
-    }
-
-    .generate-section {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    .generate-section button {
-      padding: 10px 20px;
-      font-size: 1.2em;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocktail Recipe Book</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #FFD700;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+        }
+        .header h1 {
+            color: #FFD700;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #FFD700;
+            color: #000;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #CCAA00;
+        }
+        .section {
+            margin-top: 30px;
+        }
+        .drink-details {
+            display: flex;
+            align-items: flex-start;
+        }
+        .drink-details img {
+            max-width: 300px;
+            margin-right: 20px;
+        }
+        .drink-details .info {
+            flex-grow: 1;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Cocktail Recipe Book</h1>
+    <div class="container">
+        <div class="header">
+            <h1>Cocktail Recipe Book</h1>
+        </div>
+        
+        <!-- Random Drink Section -->
+        <div class="section" id="random-drink-section">
+            <h2>Featured Drink</h2>
+            <div id="random-drink"></div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="section">
+            <h2>Search Drinks</h2>
+            <div class="form-group">
+                <label for="search-by-name">Search by Name</label>
+                <select id="search-by-name" name="search-by-name" onchange="displaySelectedDrink()">
+                    <option value="">Select a drink</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="search-by-ingredient">Search by Ingredient</label>
+                <select id="search-by-ingredient" name="search-by-ingredient" onchange="searchByIngredient()">
+                    <option value="">Select an ingredient</option>
+                </select>
+            </div>
+            <div id="search-results"></div>
+        </div>
+
+        <!-- Generate Random Drink Section -->
+        <div class="section">
+            <h2>Generate Random Drink</h2>
+            <button type="button" onclick="generateRandomDrink()">Generate</button>
+            <div id="generated-drink"></div>
+        </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        // Supabase client initialization
+        const SUPABASE_URL = '{{ SUPABASE_URL }}';
+        const SUPABASE_KEY = '{{ SUPABASE_KEY }}';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <div class="landing-drink" id="landing-drink">
-      </div>
+        console.log('Supabase initialized:', supabase);
 
-    <div class="search-section">
-      <h2>Search Drinks</h2>
-      <div class="form-group">
-        <label for="search-by-name">Search by Name</label>
-        <select id="search-by-name" name="search-by-name" onchange="displaySelectedDrink()">
-          <option value="">Select a drink</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="search-by-ingredient">Search by Ingredient</label>
-        <select id="search-by-ingredient" name="search-by-ingredient" onchange="searchByIngredient
+        async function fetchRandomDrink() {
+            const { data, error } = await supabase
+                .from('drinks')
+                .select('*')
+                .order('random()')
+                .limit(1);
+
+            if (error) {
+                console.error('Error fetching random drink:', error);
+                return;
+            }
+
+            console.log('Random drink data:', data);
+            displayDrink(data[0], 'random-drink');
+        }
+
+        async function searchByIngredient() {
+            const ingredient = document.getElementById('search-by-ingredient').value;
+            console.log('Selected ingredient:', ingredient);
+
+            const { data, error } = await supabase
+                .from('drinks')
+                .select('*')
+                .contains('ingredients', [ingredient]);
+
+            if (error) {
+                console.error('Error searching by ingredient:', error);
+                return;
+            }
+
+            console.log('Search by ingredient data:', data);
+            displaySearchResults(data);
+        }
+
+        async function generateRandomDrink() {
+            const { data, error } = await supabase
+                .from('drinks')
+                .select('*')
+                .order('random()')
+                .limit(1);
+
+            if (error) {
+                console.error('Error generating random drink:', error);
+                return;
+            }
+
+            console.log('Generated random drink data:', data);
+            displayDrink(data[0], 'generated-drink');
+        }
+
+        async function populateDropdowns() {
+            const { data: drinksData, error: drinksError } = await supabase
+                .from('drinks')
+                .select('name');
+
+            const { data: ingredientsData, error: ingredientsError } = await supabase
+                .from('ingredients')
+                .select('name');
+
+            if (drinksError) {
+                console.error('Error fetching drink names:', drinksError);
+                return;
+            }
+
+            if (ingredientsError) {
+                console.error('Error fetching ingredients:', ingredientsError);
+                return;
+            }
+
+            console.log('Drinks data:', drinksData);
+            console.log('Ingredients data:', ingredientsData);
+
+            const drinkDropdown = document.getElementById('search-by-name');
+            drinkDropdown.innerHTML += drinksData.map(drink => `
+                <option value="${drink.name}">${drink.name}</option>
+            `).join('');
+
+            const ingredientDropdown = document.getElementById('search-by-ingredient');
+            ingredientDropdown.innerHTML += ingredientsData.map(ingredient => `
+                <option value="${ingredient.name}">${ingredient.name}</option>
+            `).join('');
+        }
+
+        async function displaySelectedDrink() {
+            const drinkName = document.getElementById('search-by-name').value;
+            console.log('Selected drink name:', drinkName);
+
+            const { data, error } = await supabase
+                .from('drinks')
+                .select('*')
+                .eq('name', drinkName);
+
+            if (error) {
+                console.error('Error displaying selected drink:', error);
+                return;
+            }
+
+            console.log('Selected drink data:', data);
+            displayDrink(data[0], 'search-results');
+        }
+
+        function displayDrink(drink, elementId) {
+            const drinkElement = document.getElementById(elementId);
+            drinkElement.innerHTML = `
+                <div class="drink-details">
+                    <img src="${drink.picture_url}" alt="${drink.name}">
+                    <div class="info">
+                        <h3>${drink.name}</h3>
+                        <p>Category: ${drink.category}</p>
+                        <p>Description: ${drink.description}</p>
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            ${drink.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                        </ul>
+                        <h4>Directions:</h4>
+                        <ol>
+                            ${drink.directions.map(direction => `<li>${direction}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displaySearchResults(drinks) {
+            const searchResults = document.getElementById('search-results');
+            searchResults.innerHTML = drinks.map(drink => `
+                <div class="drink-details">
+                    <img src="${drink.picture_url}" alt="${drink.name}">
+                    <div class="info">
+                        <h3>${drink.name}</h3>
+                        <p>Category: ${drink.category}</p>
+                        <p>Description: ${drink.description}</p>
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            ${drink.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                        </ul>
+                        <h4>Directions:</h4>
+                        <ol>
+                            ${drink.directions.map(direction => `<li>${direction}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Document loaded. Fetching random drink and populating dropdowns...');
+            fetchRandomDrink();
+            populateDropdowns();
+        });
+    </script>
+</body>
+</html>
