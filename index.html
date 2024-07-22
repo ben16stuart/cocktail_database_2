@@ -105,7 +105,7 @@
         const SUPABASE_URL = '${SUPABASE_URL}';
         const SUPABASE_KEY = '${SUPABASE_KEY}';
 
-        const supabase = createClient('${SUPABASE_URL}', '${SUPABASE_KEY}');
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function fetchRandomDrink() {
             const { data, error } = await supabase
